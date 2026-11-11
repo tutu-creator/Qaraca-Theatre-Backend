@@ -1,0 +1,305 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<section id="hero" class="hero">
+  <div class="hero-content">
+    <h1>Səhnənin Qəlbinə Toxun</h1>
+    <p>Həyatın əsl üzünü "Qaraca" teatrında kəşf et.</p>
+    <a asp-controller="Repertoire" asp-action="Index" class="primary-btn" style="text-decoration: none">
+      Repertuarla Tanış Ol
+    </a>
+  </div>
+</section>
+
+<!-- POPUP -->
+<div id="popup-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:flex-start; justify-content:center; overflow-y:auto;">
+    <div style="background:#1a1a1a; border-radius:12px; border-top:3px solid #d90429; padding:2rem; max-width:600px; width:90%; margin:2rem auto;">
+        <h2 id="popup-name" style="font-family:'Playfair Display',serif; color:#ff9f1c; margin-bottom:0.3rem;"></h2>
+        <p id="popup-price" style="color:#ccc; margin-bottom:1.5rem; font-size:1rem;"></p>
+
+        <div style="background:linear-gradient(45deg,#d90429,#ff9f1c); border-radius:6px; text-align:center; padding:0.5rem; color:#fff; font-weight:600; font-size:0.85rem; margin-bottom:1.5rem; letter-spacing:2px;">
+            🎭 SƏHNƏ
+        </div>
+
+        <div id="seat-map" style="margin-bottom:1rem;"></div>
+
+        <div style="display:flex; gap:1.5rem; margin-bottom:1.5rem; font-size:0.8rem; color:#aaa;">
+            <span><span style="display:inline-block; width:14px; height:14px; background:#333; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Boş</span>
+            <span><span style="display:inline-block; width:14px; height:14px; background:#27ae60; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Seçilmiş</span>
+            <span><span style="display:inline-block; width:14px; height:14px; background:#d90429; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Dolu</span>
+        </div>
+
+        <p id="selected-info" style="color:#ff9f1c; font-size:0.9rem; margin-bottom:1.5rem; min-height:20px;"></p>
+
+        <div style="margin-bottom:1rem;">
+            <label style="display:block; color:#aaa; font-size:0.85rem; text-transform:uppercase; margin-bottom:6px;">Adınız</label>
+            <input type="text" placeholder="Adınızı daxil edin" style="width:100%; padding:10px 14px; background:#111; border:1px solid #333; border-radius:5px; color:#fff; font-size:14px; outline:none;" />
+        </div>
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; color:#aaa; font-size:0.85rem; text-transform:uppercase; margin-bottom:6px;">Email</label>
+            <input type="email" placeholder="Email daxil edin" style="width:100%; padding:10px 14px; background:#111; border:1px solid #333; border-radius:5px; color:#fff; font-size:14px; outline:none;" />
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button onclick="closePopup()" style="background:transparent; color:#aaa; border:1px solid #444; padding:0.6rem 1.5rem; border-radius:20px; cursor:pointer; font-size:0.85rem;">← Bağla</button>
+            <button onclick="confirmTicket()" style="background:linear-gradient(45deg,#d90429,#ff9f1c); color:#fff; border:none; padding:0.6rem 1.8rem; border-radius:20px; cursor:pointer; font-size:0.85rem; font-weight:600;">Təsdiqlə</button>
+        </div>
+    </div>
+</div>
+
+  <!-- Seçilmiş Tamaşalar Preview -->
+  <section class="section-padding">
+    <h2 class="section-title">Günün Tamaşaları</h2>
+    <div class="play-grid" style="max-width: 1200px; margin: 0 auto">
+      <div class="play-card">
+        <div class="card-image" style="background: linear-gradient(to top, rgba(13, 13, 13, 0.9), transparent), url(images/qirmizixett.png) center/cover;"></div>
+        <div class="card-content">
+          <h3>Qırmızı Xətt</h3>
+          <p>Dram | 120 dəq</p>
+          <button class="outline-btn" onclick="openPopup('Qırmızı Xətt', '15 AZN')">Bilet Al - 15 AZN</button>
+        </div>
+      </div>
+      <div class="play-card">
+        <div class="card-image" style="background: linear-gradient(to top, rgba(13, 13, 13, 0.9), transparent), url(images/sonzeng.png) center/cover;"></div>
+        <div class="card-content">
+          <h3>Son Zəng</h3>
+          <p>Faciə | 90 dəq</p>
+          <button class="outline-btn" onclick="openPopup('Son Zəng', '12 AZN')">Bilet Al - 12 AZN</button>
+        </div>
+      </div>
+      <div class="play-card">
+        <div class="card-image" style="background: linear-gradient(to top, rgba(13, 13, 13, 0.9), transparent), url(images/kohnesaat.png) center/cover;"></div>
+        <div class="card-content">
+          <h3>Köhnə Saat</h3>
+          <p>Komediya | 100 dəq</p>
+          <button class="outline-btn" onclick="openPopup('Köhnə Saat', '10 AZN')">Bilet Al - 10 AZN</button>
+        </div>
+      </div>
+    </div>
+    <div class="text-center" style="margin-top: 3rem">
+      <a asp-controller="Repertoire" class="outline-btn" style="text-decoration: none; padding: 1rem 2rem">Bütün Tamaşalara Bax</a>
+    </div>
+  </section>
+
+  <!-- Fəlsəfə (Geniş) -->
+  <section class="section-padding dark-bg">
+    <div class="two-col-layout" style="max-width: 1100px; margin: 0 auto">
+      <div class="two-col-text">
+        <h2 class="section-title" style="text-align: left">Sənətin Əsl Üzü: Qaraca</h2>
+        <p style="color: #ccc; font-size: 1.1rem; line-height: 1.8; margin-bottom: 1.5rem">
+          Bizim fəlsəfəmiz sadədir: süni olan hər şeyi səhnədən kənarlaşdırmaq. Tamaşaçı bəzəkli dekorasiyalara yox, insanın öz daxili mübarizəsinə şahid olmalıdır. Bizim səhnəmiz qaranlıqdır, çünki qaranlıq insanın maskalarını gizlətməsinə icazə vermir.
+        </p>
+        <p style="color: #ccc; font-size: 1.1rem; line-height: 1.8">
+          Qaraca olaraq sənətdə kommersiyalaşma rüzgarına qarşı dururuq. İzləyicilərimiz burdan çıxarkən yalnız yaxşı vaxt keçirmiş olmur, həm də həyatına dərindən təsir edəcək suallarla evə qayıdır.
+        </p>
+      </div>
+      <div class="two-col-img" style="background-image: url(images/badiirehber.png);"></div>
+    </div>
+  </section>
+
+  <!-- Səhnə Arxası (Qalereya) -->
+  <section class="section-padding">
+    <h2 class="section-title">Səhnə Arxası (Qalereya)</h2>
+    <p style="text-align: center; color: #888; margin-bottom: 2rem">Məşq prosesindən və səhnə yaradılışından anlar</p>
+    <div class="gallery-grid" style="max-width: 1200px; margin: 0 auto">
+      <div class="gallery-item" style="background-image: url(images/sehnearxasi.png); border: 1px solid #333;"></div>
+      <div class="gallery-item" style="background-image: url(images/tufan.png); border: 1px solid #333;"></div>
+      <div class="gallery-item" style="background-image: url(images/qirmizixett.png); border: 1px solid #333;"></div>
+      <div class="gallery-item" style="background-image: url(images/badiirehber.png); border: 1px solid #333;"></div>
+    </div>
+  </section>
+
+  <!-- Aktyorlar -->
+  <section class="section-padding dark-bg">
+    <h2 class="section-title">Aparıcı Aktyorlarımız</h2>
+    <div class="actors-grid" style="max-width: 1100px; margin: 0 auto">
+      <div class="actor-card">
+        <div class="actor-img" style="background-image: url(https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80);"></div>
+        <h4>Emin Qasımlı</h4>
+        <p>Baş Aktyor</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-img" style="background-image: url(https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=400&q=80);"></div>
+        <h4>Leyla Həsənova</h4>
+        <p>Baş Aktrisa</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-img" style="background-image: url(images/badiirehber.png);"></div>
+        <h4>Nicat Əliyev</h4>
+        <p>Baş Rejissor</p>
+      </div>
+      <div class="actor-card">
+        <div class="actor-img" style="background-image: url(https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=400&q=80);"></div>
+        <h4>Samir Mustafayev</h4>
+        <p>Aktyor</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- İzləyici rəyləri -->
+  <section class="section-padding" style="position: relative; overflow: hidden;">
+    <h2 class="section-title">Tamaşaçılarımız Nə Deyir?</h2>
+    <div class="slider-container" style="max-width: 1200px; margin: 0 auto; position: relative;">
+      <button class="slider-btn prev-btn" id="prevBtn">❮</button>
+      <div class="slider-wrapper">
+        <div class="testimonials-slider-track" id="testimonialsTrack">
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★★</div>
+            <p class="review-text">"Qırmızı Xətt" tamaşası həyatımda izlədiyim ən təsirli əsərlərdən biri oldu. Aktyorların enerjisi birbaşa mənə keçdi və günlərlə təsirindən çıxa bilmədim."</p>
+            <p class="reviewer-name">- Aytən M.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★★</div>
+            <p class="review-text">"Teatrın qaranlıq konsepsiyası və istifadə edilən musiqilər insanı bambaşqa bir dünyaya aparır. Sözün əsl mənasında nəfəs kəsici bir təcrübə idi."</p>
+            <p class="reviewer-name">- Samir R.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★☆</div>
+            <p class="review-text">"Dünən axşam dostlarımla olduq. Komediya dəmək olar, ancaq içində çox güclü sarkazm və fəlsəfi mesajlar gizlənmişdi. Çox bəyəndik."</p>
+            <p class="reviewer-name">- Leyla Ə.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★★</div>
+            <p class="review-text">"Həyatın sərt reallıqlarını heç bir senzuraya salmadan təqdim edirlər. Göz yaşlarımı saxlaya bilmədiyim anlar oldu. Növbəti tamaşanı səbirsizliklə gözləyirəm."</p>
+            <p class="reviewer-name">- Rəşad K.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★★</div>
+            <p class="review-text">"Rejissorun yozumu beynimdəki teatr anlayışını tamamilə dəyişdi. Dekorasiyanın sadəliyi aktyor oyunu ilə necə vəhdət təşkil edə bilər? İnanılmaz!"</p>
+            <p class="reviewer-name">- Səbinə Q.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★★</div>
+            <p class="review-text">"Teatr sənətinin belə güclü ola biləcəyini düşünmürdüm. Çox sağ olun belə bir təcrübə yaşatdığınız üçün."</p>
+            <p class="reviewer-name">- Tural M.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★☆</div>
+            <p class="review-text">"Aktyorların performansı heyrətamiz idi. Bəzi yerlərdə sadəcə donub qaldım. Çox fərqli bir tamaşa."</p>
+            <p class="reviewer-name">- Nərmin Ə.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★★</div>
+            <p class="review-text">"İnsanın daxilinə toxunan səhnələr var idi. Hər kəsə tövsiyə edirəm, mütləq gedin baxın."</p>
+            <p class="reviewer-name">- Cavidan S.</p>
+          </div>
+          <div class="review-card">
+            <div style="color: var(--primary-orange); font-size: 1.5rem; margin-bottom: 10px;">★★★★★</div>
+            <p class="review-text">"Mükəmməl sənət əsəri. Sözün bitdiyi yer... Bütün komandaya təşəkkürlər!"</p>
+            <p class="reviewer-name">- Aygün P.</p>
+          </div>
+        </div>
+      </div>
+      <button class="slider-btn next-btn" id="nextBtn">❯</button>
+    </div>
+    <div class="slider-dots" id="sliderDots"></div>
+  </section>
+
+  <!-- Xəbərlər -->
+  <section class="section-padding dark-bg">
+    <h2 class="section-title">Teatr Xəbərləri</h2>
+    <div class="news-list">
+      <div class="news-item">
+        <div class="news-date">12 May 2026</div>
+        <div class="news-content">
+          <h3>Yeni "Qırmızı Xətt" tamaşasının premyerası oldu</h3>
+          <p>Dünən baş tutan premyerada anşlaq yaşandı. Tamaşaçılar aktyorları ayaq üstə alqışladılar, tamaşa böyük rəğbətlə qarşılandı.</p>
+        </div>
+      </div>
+      <div class="news-item">
+        <div class="news-date">05 May 2026</div>
+        <div class="news-content">
+          <h3>Teatrımız beynəlxalq festivala dəvət aldı</h3>
+          <p>"Qaraca" teatrının kollektivi növbəti ay Avropada keçiriləcək nüfuzlu teatr festivalında ölkəmizi təmsil edəcək.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tərəfdaşlar -->
+  <section class="section-padding text-center">
+    <h2 class="section-title">Tərəfdaşlarımız</h2>
+    <p style="color: #888; margin-bottom: 2rem">Sənətin inkişafına dəstək olanlar</p>
+    <div class="partners-row" style="max-width: 1000px; margin: 0 auto">
+      <div class="partner-logo">Musiqi Dünyası</div>
+      <div class="partner-logo">Baku Times</div>
+      <div class="partner-logo">İncəsənət Fondu</div>
+      <div class="partner-logo">Səs TV</div>
+    </div>
+  </section>
+
+  <!-- Newsletter -->
+  <section class="section-padding text-center dark-bg" style="border-top: 1px solid #222">
+    <h2 class="section-title">Bülletenə Abunə Ol</h2>
+    <p style="margin-bottom: 2rem; color: #aaa">Yeni tamaşalar və füsunkar endirimlərdən ilk siz xəbərdar olun.</p>
+    <form style="display: flex; max-width: 600px; margin: 0 auto; gap: 10px">
+      <input type="email" placeholder="E-poçt ünvanınız" style="flex: 1; padding: 1rem; border-radius: 5px; border: 1px solid #333; background: #111; color: #fff;" required />
+      <button type="submit" class="cta-btn" style="border-radius: 5px; margin: 0">Abunə Ol</button>
+    </form>
+  </section>
+
+<script>
+    var selectedSeats = [];
+    var occupiedSeats = ['A3','A7','B2','B9','C5','C6','D1','D8','E4','E10','F3','F7','G2','G9','H5','H6'];
+    var rows = ['A','B','C','D','E','F','G','H'];
+
+    function buildSeatMap() {
+        var map = document.getElementById('seat-map');
+        map.innerHTML = '';
+        rows.forEach(function(row) {
+            var rowDiv = document.createElement('div');
+            rowDiv.style.cssText = 'display:flex; align-items:center; gap:6px; margin-bottom:8px;';
+            var rowLabel = document.createElement('span');
+            rowLabel.innerText = row;
+            rowLabel.style.cssText = 'color:#aaa; font-size:0.8rem; width:16px; text-align:center;';
+            rowDiv.appendChild(rowLabel);
+            for (var i = 1; i <= 10; i++) {
+                var seatId = row + i;
+                var seat = document.createElement('div');
+                seat.id = 'seat-' + seatId;
+                seat.innerText = i;
+                seat.dataset.seat = seatId;
+                var isOccupied = occupiedSeats.indexOf(seatId) !== -1;
+                seat.style.cssText = 'width:32px; height:32px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; cursor:' + (isOccupied ? 'not-allowed' : 'pointer') + '; background:' + (isOccupied ? '#d90429' : '#333') + '; color:#fff; transition:background 0.2s;';
+                if (!isOccupied) {
+                    seat.addEventListener('click', function() { toggleSeat(this.dataset.seat); });
+                }
+                rowDiv.appendChild(seat);
+            }
+            map.appendChild(rowDiv);
+        });
+    }
+
+    function toggleSeat(seatId) {
+        var seat = document.getElementById('seat-' + seatId);
+        var idx = selectedSeats.indexOf(seatId);
+        if (idx === -1) { selectedSeats.push(seatId); seat.style.background = '#27ae60'; }
+        else { selectedSeats.splice(idx, 1); seat.style.background = '#333'; }
+        document.getElementById('selected-info').innerText = selectedSeats.length > 0 ? 'Seçilmiş yerlər: ' + selectedSeats.join(', ') : '';
+    }
+
+    function openPopup(name, price) {
+        selectedSeats = [];
+        document.getElementById('popup-name').innerText = name;
+        document.getElementById('popup-price').innerText = 'Qiymət: ' + price;
+        document.getElementById('selected-info').innerText = '';
+        buildSeatMap();
+        document.getElementById('popup-overlay').style.display = 'flex';
+    }
+
+    function closePopup() {
+        document.getElementById('popup-overlay').style.display = 'none';
+        selectedSeats = [];
+    }
+
+    function confirmTicket() {
+        if (selectedSeats.length === 0) { alert('Zəhmət olmasa yer seçin!'); return; }
+        alert('Biletiniz təsdiqləndi! 🎭\nYerlər: ' + selectedSeats.join(', '));
+        closePopup();
+    }
+
+    document.getElementById('popup-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closePopup();
+    });
+</script>

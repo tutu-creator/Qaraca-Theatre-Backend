@@ -1,0 +1,212 @@
+﻿<!doctype html>
+<html lang="az">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Qaraca Teatrı - Ana Səhifə</title>
+    <link rel="stylesheet" href="style.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Open+Sans:wght@300;400;600&display=swap" rel="stylesheet" />
+</head>
+
+<body>
+<header class="navbar">
+    <a asp-controller="Home" asp-action="Index" class="logo" style="text-decoration:none;">Qaraca</a>
+    <nav class="nav-links">
+        <a asp-controller="Home" asp-action="Index" class="active">Ana Səhifə</a>
+        <a asp-controller="Repertoire" asp-action="Index">Tamaşalar</a>
+        <a asp-controller="About" asp-action="Index">Haqqımızda</a>
+        <a asp-controller="Contact" asp-action="Index">Əlaqə</a>
+    </nav>
+    <button class="cta-btn" onclick="openNavPopup()">Bilet Al</button>
+    <div class="menu-toggle" id="mobile-menu">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </div>
+</header>
+
+<!-- NAVBAR POPUP -->
+<div id="nav-popup-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:flex-start; justify-content:center; overflow-y:auto;">
+    <div style="background:#1a1a1a; border-radius:12px; border-top:3px solid #d90429; padding:2rem; max-width:600px; width:90%; margin:2rem auto; position:relative;">
+
+        <h2 style="font-family:'Playfair Display',serif; color:#ff9f1c; margin-bottom:0.3rem;">Bilet Al</h2>
+        <p style="color:#ccc; margin-bottom:1.5rem; font-size:0.95rem;">Əvvəlcə tamaşanı seçin</p>
+
+        <!-- Tamaşa seçimi -->
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; color:#aaa; font-size:0.85rem; text-transform:uppercase; margin-bottom:8px;">Tamaşa</label>
+            <select id="nav-tamasa-select" onchange="onNavTamasaSelect()" style="width:100%; padding:10px 14px; background:#111; border:1px solid #333; border-radius:5px; color:#fff; font-size:14px; outline:none;">
+                <option value="">-- Tamaşa seçin --</option>
+                <option value="Qırmızı Xətt|15 AZN">Qırmızı Xətt — 15 AZN</option>
+                <option value="Son Zəng|12 AZN">Son Zəng — 12 AZN</option>
+                <option value="Köhnə Saat|10 AZN">Köhnə Saat — 10 AZN</option>
+                <option value="Tufan|12 AZN">Tufan — 12 AZN</option>
+                <option value="Zəncir|10 AZN">Zəncir — 10 AZN</option>
+                <option value="Kölgələr|8 AZN">Kölgələr — 8 AZN</option>
+                <option value="Sehrli Oyuncaqlar|8 AZN">Sehrli Oyuncaqlar — 8 AZN</option>
+                <option value="Kiçik Şahzadə|10 AZN">Kiçik Şahzadə — 10 AZN</option>
+                <option value="Qaraca qız|15 AZN">Qaraca qız — 15 AZN</option>
+            </select>
+        </div>
+
+        <!-- Seçilmiş tamaşa adı və qiyməti -->
+        <div id="nav-tamasa-info" style="display:none; margin-bottom:1.5rem;">
+            <p id="nav-popup-name" style="font-family:'Playfair Display',serif; color:#ff9f1c; font-size:1.2rem; margin-bottom:0.2rem;"></p>
+            <p id="nav-popup-price" style="color:#ccc; font-size:0.95rem;"></p>
+        </div>
+
+        <!-- Səhnə -->
+        <div id="nav-sehne" style="display:none;">
+            <div style="background:linear-gradient(45deg,#d90429,#ff9f1c); border-radius:6px; text-align:center; padding:0.5rem; color:#fff; font-weight:600; font-size:0.85rem; margin-bottom:1.5rem; letter-spacing:2px;">
+                🎭 SƏHNƏ
+            </div>
+
+            <!-- Oturacaq Sxemi -->
+            <div id="nav-seat-map" style="margin-bottom:1rem;"></div>
+
+            <!-- İzahat -->
+            <div style="display:flex; gap:1.5rem; margin-bottom:1.5rem; font-size:0.8rem; color:#aaa;">
+                <span><span style="display:inline-block; width:14px; height:14px; background:#333; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Boş</span>
+                <span><span style="display:inline-block; width:14px; height:14px; background:#27ae60; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Seçilmiş</span>
+                <span><span style="display:inline-block; width:14px; height:14px; background:#d90429; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Dolu</span>
+            </div>
+
+            <p id="nav-selected-info" style="color:#ff9f1c; font-size:0.9rem; margin-bottom:1.5rem; min-height:20px;"></p>
+
+            <!-- Ad və Email -->
+            <div style="margin-bottom:1rem;">
+                <label style="display:block; color:#aaa; font-size:0.85rem; text-transform:uppercase; margin-bottom:6px;">Adınız</label>
+                <input type="text" placeholder="Adınızı daxil edin" style="width:100%; padding:10px 14px; background:#111; border:1px solid #333; border-radius:5px; color:#fff; font-size:14px; outline:none;" />
+            </div>
+            <div style="margin-bottom:1.5rem;">
+                <label style="display:block; color:#aaa; font-size:0.85rem; text-transform:uppercase; margin-bottom:6px;">Email</label>
+                <input type="email" placeholder="Email daxil edin" style="width:100%; padding:10px 14px; background:#111; border:1px solid #333; border-radius:5px; color:#fff; font-size:14px; outline:none;" />
+            </div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button onclick="closeNavPopup()" style="background:transparent; color:#aaa; border:1px solid #444; padding:0.6rem 1.5rem; border-radius:20px; cursor:pointer; font-size:0.85rem;">← Bağla</button>
+            <button onclick="confirmNavTicket()" style="background:linear-gradient(45deg,#d90429,#ff9f1c); color:#fff; border:none; padding:0.6rem 1.8rem; border-radius:20px; cursor:pointer; font-size:0.85rem; font-weight:600;">Təsdiqlə</button>
+        </div>
+    </div>
+</div>
+
+@RenderBody()
+
+<footer class="footer">
+    <div class="footer-content">
+        <h2 class="logo">Qaraca</h2>
+        <p>Sənətin qəlbi burada döyünür.</p>
+        <div class="contact-info">
+            <p>📍 Bakı şəhəri, Sənət küçəsi 1</p>
+            <p>📞 +994 50 000 00 00</p>
+            <p>✉️ tutuqaracaa@gmail.com</p>
+        </div>
+    </div>
+    <div class="copyright">
+        &copy; 2026 Qaraca Teatrı. Bütün hüquqlar qorunur.
+    </div>
+</footer>
+
+<script src="script.js"></script>
+
+<script>
+    var navSelectedSeats = [];
+    var navOccupiedSeats = ['A3','A7','B2','B9','C5','C6','D1','D8','E4','E10','F3','F7','G2','G9','H5','H6'];
+    var navRows = ['A','B','C','D','E','F','G','H'];
+
+    function openNavPopup() {
+        navSelectedSeats = [];
+        document.getElementById('nav-tamasa-select').value = '';
+        document.getElementById('nav-tamasa-info').style.display = 'none';
+        document.getElementById('nav-sehne').style.display = 'none';
+        document.getElementById('nav-selected-info').innerText = '';
+        document.getElementById('nav-popup-overlay').style.display = 'flex';
+    }
+
+    function closeNavPopup() {
+        document.getElementById('nav-popup-overlay').style.display = 'none';
+        navSelectedSeats = [];
+    }
+
+    function onNavTamasaSelect() {
+        var val = document.getElementById('nav-tamasa-select').value;
+        if (!val) {
+            document.getElementById('nav-tamasa-info').style.display = 'none';
+            document.getElementById('nav-sehne').style.display = 'none';
+            return;
+        }
+        var parts = val.split('|');
+        document.getElementById('nav-popup-name').innerText = parts[0];
+        document.getElementById('nav-popup-price').innerText = 'Qiymət: ' + parts[1];
+        document.getElementById('nav-tamasa-info').style.display = 'block';
+        document.getElementById('nav-sehne').style.display = 'block';
+        navSelectedSeats = [];
+        document.getElementById('nav-selected-info').innerText = '';
+        buildNavSeatMap();
+    }
+
+    function buildNavSeatMap() {
+        var map = document.getElementById('nav-seat-map');
+        map.innerHTML = '';
+        navRows.forEach(function(row) {
+            var rowDiv = document.createElement('div');
+            rowDiv.style.cssText = 'display:flex; align-items:center; gap:6px; margin-bottom:8px;';
+
+            var rowLabel = document.createElement('span');
+            rowLabel.innerText = row;
+            rowLabel.style.cssText = 'color:#aaa; font-size:0.8rem; width:16px; text-align:center;';
+            rowDiv.appendChild(rowLabel);
+
+            for (var i = 1; i <= 10; i++) {
+                var seatId = row + i;
+                var seat = document.createElement('div');
+                seat.id = 'nav-seat-' + seatId;
+                seat.innerText = i;
+                seat.dataset.seat = seatId;
+
+                var isOccupied = navOccupiedSeats.indexOf(seatId) !== -1;
+                seat.style.cssText = 'width:32px; height:32px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; cursor:' + (isOccupied ? 'not-allowed' : 'pointer') + '; background:' + (isOccupied ? '#d90429' : '#333') + '; color:#fff; transition:background 0.2s;';
+
+                if (!isOccupied) {
+                    seat.addEventListener('click', function() {
+                        navToggleSeat(this.dataset.seat);
+                    });
+                }
+                rowDiv.appendChild(seat);
+            }
+            map.appendChild(rowDiv);
+        });
+    }
+
+    function navToggleSeat(seatId) {
+        var seat = document.getElementById('nav-seat-' + seatId);
+        var idx = navSelectedSeats.indexOf(seatId);
+        if (idx === -1) {
+            navSelectedSeats.push(seatId);
+            seat.style.background = '#27ae60';
+        } else {
+            navSelectedSeats.splice(idx, 1);
+            seat.style.background = '#333';
+        }
+        var info = document.getElementById('nav-selected-info');
+        info.innerText = navSelectedSeats.length > 0 ? 'Seçilmiş yerlər: ' + navSelectedSeats.join(', ') : '';
+    }
+
+    function confirmNavTicket() {
+        var val = document.getElementById('nav-tamasa-select').value;
+        if (!val) { alert('Zəhmət olmasa tamaşa seçin!'); return; }
+        if (navSelectedSeats.length === 0) { alert('Zəhmət olmasa yer seçin!'); return; }
+        var parts = val.split('|');
+        alert('Biletiniz təsdiqləndi! 🎭\nTamaşa: ' + parts[0] + '\nYerlər: ' + navSelectedSeats.join(', '));
+        closeNavPopup();
+    }
+
+    document.getElementById('nav-popup-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closeNavPopup();
+    });
+</script>
+
+</body>
+</html>

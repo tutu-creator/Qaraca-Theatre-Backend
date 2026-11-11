@@ -1,0 +1,204 @@
+@{
+    ViewBag.Title = "title";
+    Layout = "_Layout";
+}
+@model Final_Layihe.ViewModels.RepertoireVM
+
+<!-- POPUP -->
+<div id="popup-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:9999; align-items:center; justify-content:center; overflow-y:auto;">
+    <div style="background:#1a1a1a; border-radius:12px; border-top:3px solid #d90429; padding:2rem; max-width:600px; width:90%; margin: 2rem auto; position:relative;">
+        
+        <h2 id="popup-name" style="font-family:'Playfair Display',serif; color:#ff9f1c; margin-bottom:0.3rem;"></h2>
+        <p id="popup-price" style="color:#ccc; margin-bottom:1.5rem; font-size:1rem;"></p>
+
+        <!-- Səhnə -->
+        <div style="background:linear-gradient(45deg,#d90429,#ff9f1c); border-radius:6px; text-align:center; padding:0.5rem; color:#fff; font-weight:600; font-size:0.85rem; margin-bottom:1.5rem; letter-spacing:2px;">
+            🎭 SƏHNƏ
+        </div>
+
+        <!-- Oturacaq Sxemi -->
+        <div id="seat-map" style="margin-bottom:1rem;"></div>
+
+        <!-- İzahat -->
+        <div style="display:flex; gap:1.5rem; margin-bottom:1.5rem; font-size:0.8rem; color:#aaa;">
+            <span><span style="display:inline-block; width:14px; height:14px; background:#333; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Boş</span>
+            <span><span style="display:inline-block; width:14px; height:14px; background:#27ae60; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Seçilmiş</span>
+            <span><span style="display:inline-block; width:14px; height:14px; background:#d90429; border-radius:3px; margin-right:4px; vertical-align:middle;"></span>Dolu</span>
+        </div>
+
+        <p id="selected-info" style="color:#ff9f1c; font-size:0.9rem; margin-bottom:1.5rem; min-height:20px;"></p>
+
+        <!-- Ad və Email -->
+        <div style="margin-bottom:1rem;">
+            <label style="display:block; color:#aaa; font-size:0.85rem; text-transform:uppercase; margin-bottom:6px;">Adınız</label>
+            <input type="text" placeholder="Adınızı daxil edin" style="width:100%; padding:10px 14px; background:#111; border:1px solid #333; border-radius:5px; color:#fff; font-size:14px; outline:none;" />
+        </div>
+        <div style="margin-bottom:1.5rem;">
+            <label style="display:block; color:#aaa; font-size:0.85rem; text-transform:uppercase; margin-bottom:6px;">Email</label>
+            <input type="email" placeholder="Email daxil edin" style="width:100%; padding:10px 14px; background:#111; border:1px solid #333; border-radius:5px; color:#fff; font-size:14px; outline:none;" />
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+            <button onclick="closePopup()" style="background:transparent; color:#aaa; border:1px solid #444; padding:0.6rem 1.5rem; border-radius:20px; cursor:pointer; font-size:0.85rem;">← Bağla</button>
+            <button onclick="confirmTicket()" style="background:linear-gradient(45deg,#d90429,#ff9f1c); color:#fff; border:none; padding:0.6rem 1.8rem; border-radius:20px; cursor:pointer; font-size:0.85rem; font-weight:600;">Təsdiqlə</button>
+        </div>
+    </div>
+</div>
+
+<div class="page-hero" style="background-image: linear-gradient(rgba(13, 13, 13, 0.8), rgba(13, 13, 13, 0.9)), url(images/tufan_1776926025722.png);">
+    <h1>Repertuar</h1>
+    <p>Bütün tamaşalarımız bir yerdə</p>
+</div>
+
+<!-- Əsas Tamaşalar -->
+<section class="section-padding">
+    <h2 class="section-title">Əsas Səhnə</h2>
+    <div class="play-grid" style="max-width: 1200px; margin: 0 auto">
+        @foreach (var item in Model.tamasalar)
+        {
+            <div class="play-card">
+                <div class="card-image" style="background: linear-gradient(135deg, rgba(229, 9, 20, 0.8), transparent), url(images/@item.Image) center/cover;"></div>
+                <div class="card-content">
+                    <h3>@item.Name</h3>
+                    <p>@item.Description</p>
+                    <button class="outline-btn" onclick="openPopup('@item.Name', '@item.Price')">@item.Price</button>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Uşaqlar üçün -->
+<section class="section-padding dark-bg text-center">
+    <h2 class="section-title">Uşaqlar və Yeniyetmələr Üçün</h2>
+    <p style="color:#ccc; margin-bottom:3rem; max-width:600px; margin-left:auto; margin-right:auto;">
+        Gələcək nəsilləri sənətlə böyütmək üçün hər bazar günü səhər seanslarında balacaları gözləyirik.
+    </p>
+    <div class="play-grid" style="max-width:10000px; margin:0 auto; justify-content:center; display:flex; flex-wrap:wrap; gap:2rem;">
+        @foreach (var item in Model.children)
+        {
+            <div class="play-card" style="width:350px">
+                <div class="card-image" style="background: linear-gradient(135deg, rgba(20, 20, 20, 0.7), transparent), url(images/@item.Image) center/cover;"></div>
+                <div class="card-content">
+                    <h3>@item.Name</h3>
+                    <p>@item.Description</p>
+                    <button class="outline-btn" onclick="openPopup('@item.Name', '@item.Price')">@item.Price</button>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- YENİ MÖVSÜM -->
+<section class="section-padding">
+    <div style="max-width:1000px; margin:0 auto; display:flex; flex-wrap:wrap; gap:3rem; align-items:center;">
+        <div style="flex:1; min-width:300px">
+            <img src="images/sehnearxasi.png" alt="Səhnə Görüntüsü" style="width:100%; border-radius:10px; border:3px solid var(--primary-red);" />
+        </div>
+        <div style="flex:1; min-width:300px">
+            <h2 class="section-title" style="text-align:left; margin-bottom:1.5rem">Yeniliklər: İkinci Mövsüm</h2>
+            <p style="color:#ccc; margin-bottom:1rem; font-size:1.1rem">
+                Qarşıdan gələn payız mövsümündə teatrımız daha 3 fərqli fəlsəfi dram təqdim etməyə hazırlaşır.
+                Eyni zamanda "Gənc Baxış" layihəsi çərçivəsində tələbələr tərəfindən hazırlanan eksperimental tamaşalar da nümayiş olunacaq.
+            </p>
+            <p style="color:#ccc; font-size:1.1rem; margin-bottom:2rem">
+                Daha çox gülüş, daha dərin düşüncələr gətirəcək bu mövsümü bizimlə birlikdə yaşayın.
+            </p>
+        </div>
+    </div>
+</section>
+
+<script>
+    var selectedSeats = [];
+
+    // Bəzi oturacaqlar dolu kimi göstərilir (random)
+    var occupiedSeats = ['A3','A7','B2','B9','C5','C6','D1','D8','E4','E10','F3','F7','G2','G9','H5','H6'];
+
+    var rows = ['A','B','C','D','E','F','G','H'];
+    var seatsPerRow = 10;
+
+    function buildSeatMap() {
+        var map = document.getElementById('seat-map');
+        map.innerHTML = '';
+        rows.forEach(function(row) {
+            var rowDiv = document.createElement('div');
+            rowDiv.style.cssText = 'display:flex; align-items:center; gap:6px; margin-bottom:8px;';
+
+            var rowLabel = document.createElement('span');
+            rowLabel.innerText = row;
+            rowLabel.style.cssText = 'color:#aaa; font-size:0.8rem; width:16px; text-align:center;';
+            rowDiv.appendChild(rowLabel);
+
+            for (var i = 1; i <= seatsPerRow; i++) {
+                var seatId = row + i;
+                var seat = document.createElement('div');
+                seat.id = 'seat-' + seatId;
+                seat.innerText = i;
+                seat.dataset.seat = seatId;
+
+                var isOccupied = occupiedSeats.indexOf(seatId) !== -1;
+
+                seat.style.cssText = 'width:32px; height:32px; border-radius:4px; display:flex; align-items:center; justify-content:center; font-size:0.7rem; cursor:' + (isOccupied ? 'not-allowed' : 'pointer') + '; background:' + (isOccupied ? '#d90429' : '#333') + '; color:#fff; transition: background 0.2s;';
+
+                if (!isOccupied) {
+                    seat.addEventListener('click', function() {
+                        toggleSeat(this.dataset.seat);
+                    });
+                }
+
+                rowDiv.appendChild(seat);
+            }
+            map.appendChild(rowDiv);
+        });
+    }
+
+    function toggleSeat(seatId) {
+        var seat = document.getElementById('seat-' + seatId);
+        var idx = selectedSeats.indexOf(seatId);
+        if (idx === -1) {
+            selectedSeats.push(seatId);
+            seat.style.background = '#27ae60';
+        } else {
+            selectedSeats.splice(idx, 1);
+            seat.style.background = '#333';
+        }
+        updateSelectedInfo();
+    }
+
+    function updateSelectedInfo() {
+        var info = document.getElementById('selected-info');
+        if (selectedSeats.length === 0) {
+            info.innerText = '';
+        } else {
+            info.innerText = 'Seçilmiş yerlər: ' + selectedSeats.join(', ');
+        }
+    }
+
+    function openPopup(name, price) {
+        selectedSeats = [];
+        document.getElementById('popup-name').innerText = name;
+        document.getElementById('popup-price').innerText = 'Qiymət: ' + price;
+        document.getElementById('selected-info').innerText = '';
+        buildSeatMap();
+        var overlay = document.getElementById('popup-overlay');
+        overlay.style.display = 'flex';
+    }
+
+    function closePopup() {
+        document.getElementById('popup-overlay').style.display = 'none';
+        selectedSeats = [];
+    }
+
+    function confirmTicket() {
+        if (selectedSeats.length === 0) {
+            alert('Zəhmət olmasa yer seçin!');
+            return;
+        }
+        alert('Biletiniz təsdiqləndi! 🎭\nYerlər: ' + selectedSeats.join(', '));
+        closePopup();
+    }
+
+    document.getElementById('popup-overlay').addEventListener('click', function(e) {
+        if (e.target === this) closePopup();
+    });
+</script>
