@@ -7,11 +7,11 @@ Final project of a 6-month Full-stack Software Development program, presented li
 **Live demo (front end):** [tutu-creator.github.io/Qaraca.teatr](https://tutu-creator.github.io/Qaraca.teatr/)
 
 ## Features
-- Ticket booking with seat selection (available, selected, occupied)
-- Repertoire management: plays, genres, duration, age rating and price
-- Admin panel (Areas) to manage content
+- Server-rendered pages with ASP.NET Core MVC: Home, Repertoire, About, Contact
+- Admin panel (Areas/Admin) with a dashboard and management of children's shows
+- Data stored in SQL Server with Entity Framework Core and migrations
 - Layered structure: Controllers, Data Access Layer, Models, ViewModels, Views
-- Relational database with Entity Framework Core migrations
+- Interactive ticket booking with seat selection on the front end (JavaScript)
 - Docker support
 
 ## Built With
